@@ -4,7 +4,7 @@ dotenv.config();
 import express from "express";
 import cors from "cors";
 
-import "./firebase/firebaseAdmin.js";
+//import "./firebase/firebaseAdmin.js";
 import aiRoutes from "./routes/aiRoutes.js";
 
 console.log(
