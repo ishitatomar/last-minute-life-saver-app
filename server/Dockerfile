@@ -7,7 +7,7 @@ RUN npm install
 
 COPY . .
 
-RUN ls -R
+WORKDIR /app
 
 EXPOSE 8080
 
