@@ -7,8 +7,8 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 8080
-
 RUN ls -R
 
-CMD ["node", "./server/server.js"]
+EXPOSE 8080
+
+CMD ["node", "server/server.js"]
