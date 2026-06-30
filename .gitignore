@@ -23,8 +23,11 @@ dist-ssr
 *.sln
 *.sw?
 
+# Environment files
 .env
 .env.*
-!.env.production
 server/.env
 server/firebase/serviceAccountKey.json
+
+# Keep only the example file
+!.env.example
