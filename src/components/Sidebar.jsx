@@ -1,38 +1,50 @@
 import { Link } from "react-router-dom";
 
-
 export default function Sidebar() {
   return (
-    <div className="w-64 h-screen bg-slate-900 text-white p-6">
-
+    <aside className="w-64 h-screen bg-slate-900 text-white p-6 shadow-xl">
       <h1 className="text-2xl font-bold text-cyan-400 mb-10">
         Last Minute
       </h1>
 
-      <nav className="space-y-5">
+      <nav className="space-y-4">
 
-        <Link to="/dashboard" className="block hover:text-cyan-400">
-            🏠 Dashboard
+        <Link
+          to="/dashboard"
+          className="block p-3 rounded-lg hover:bg-slate-800 hover:text-cyan-400 transition"
+        >
+          🏠 Dashboard
         </Link>
 
-        <Link to="/chat" className="block py-2 hover:text-cyan-400">
-            🤖 AI Assistant
+        <Link
+          to="/chat"
+          className="block p-3 rounded-lg hover:bg-slate-800 hover:text-cyan-400 transition"
+        >
+          🤖 AI Assistant
         </Link>
 
-        <Link to="/calendar" className="block hover:text-cyan-400">
-            📅 Calendar
+        <Link
+          to="/calendar"
+          className="block p-3 rounded-lg hover:bg-slate-800 hover:text-cyan-400 transition"
+        >
+          📅 Calendar
         </Link>
 
-       <Link to="/analytics" className="block hover:text-cyan-400">
-            📊 Analytics
-        </Link> 
+        <Link
+          to="/analytics"
+          className="block p-3 rounded-lg hover:bg-slate-800 hover:text-cyan-400 transition"
+        >
+          📊 Analytics
+        </Link>
 
-        <Link className="block hover:text-cyan-400" to="/profile">
+        <Link
+          to="/profile"
+          className="block p-3 rounded-lg hover:bg-slate-800 hover:text-cyan-400 transition"
+        >
           👤 Profile
         </Link>
 
       </nav>
-
-    </div>
+    </aside>
   );
 }

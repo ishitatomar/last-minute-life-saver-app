@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FiMenu } from "react-icons/fi";
 import { getTasks } from "../services/taskService";
 
 import {
@@ -26,6 +27,7 @@ export default function Analytics() {
   const navigate = useNavigate();
 
   const [tasks, setTasks] = useState([]);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -118,12 +120,10 @@ export default function Analytics() {
     )
     .slice(0, 5);
     return (
-  <div className="flex min-h-screen bg-slate-950 text-white">
-
+<div className="min-h-screen bg-slate-950 text-white lg:flex">
     {/* ================= SIDEBAR ================= */}
 
-    <div className="w-72 bg-slate-900 border-r border-slate-800 p-6">
-
+<div className="hidden lg:block w-72 bg-slate-900 border-r border-slate-800 p-6">
       <h1 className="text-3xl font-bold text-cyan-400 mb-10">
         📊 Analytics
       </h1>
@@ -176,56 +176,132 @@ export default function Analytics() {
       </div>
 
     </div>
+{/* Mobile Sidebar */}
 
-    {/* ================= MAIN CONTENT ================= */}
+{sidebarOpen && (
+  <>
+    <div
+      className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+      onClick={() => setSidebarOpen(false)}
+    />
 
-    <div className="flex-1 p-8">
+    <div className="fixed left-0 top-0 h-full w-72 bg-slate-900 z-50 p-6 lg:hidden">
 
-      <h1 className="text-4xl font-bold mb-8">
-        📊 Analytics Dashboard
+      <button
+        onClick={() => setSidebarOpen(false)}
+        className="mb-6"
+      >
+        ✕ Close
+      </button>
+
+      <h1 className="text-3xl font-bold text-cyan-400 mb-8">
+        📊 Analytics
       </h1>
 
+      <div className="space-y-3">
+
+        <button
+          onClick={()=>{
+            navigate("/dashboard");
+            setSidebarOpen(false);
+          }}
+          className="w-full text-left bg-slate-800 rounded-xl p-3"
+        >
+          🏠 Dashboard
+        </button>
+
+        <button
+          onClick={()=>{
+            navigate("/calendar");
+            setSidebarOpen(false);
+          }}
+          className="w-full text-left bg-slate-800 rounded-xl p-3"
+        >
+          📅 Calendar
+        </button>
+
+        <button
+          onClick={()=>{
+            navigate("/chat");
+            setSidebarOpen(false);
+          }}
+          className="w-full text-left bg-slate-800 rounded-xl p-3"
+        >
+          🤖 AI Assistant
+        </button>
+
+        <button
+          onClick={()=>{
+            navigate("/profile");
+            setSidebarOpen(false);
+          }}
+          className="w-full text-left bg-slate-800 rounded-xl p-3"
+        >
+          👤 Profile
+        </button>
+
+      </div>
+
+    </div>
+  </>
+)}
+    {/* ================= MAIN CONTENT ================= */}
+
+<div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-x-hidden">
+<div className="flex items-center gap-4 mb-6">
+
+  <button
+    className="lg:hidden bg-slate-900 p-3 rounded-xl"
+    onClick={() => setSidebarOpen(true)}
+  >
+    <FiMenu size={24} />
+  </button>
+
+  <h1 className="text-2xl sm:text-4xl font-bold">
+    📊 Analytics Dashboard
+  </h1>
+
+</div>        
       {/* ================= KPI CARDS ================= */}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
 
-        <div className="bg-slate-900 rounded-2xl p-6 shadow-lg">
+        <div className="bg-slate-900 rounded-2xl p-4 sm:p-6 shadow-lg">
           <p className="text-gray-400">
             Total Tasks
           </p>
 
-          <h2 className="text-4xl font-bold mt-2 text-cyan-400">
-            {totalTasks}
+<h2 className="text-2xl sm:text-4xl font-bold mt-2 text-cyan-400">            {totalTasks}
           </h2>
         </div>
 
-        <div className="bg-slate-900 rounded-2xl p-6 shadow-lg">
+        <div className="bg-slate-900 rounded-2xl p-4 sm:p-6 shadow-lg">
           <p className="text-gray-400">
             Completed
           </p>
 
-          <h2 className="text-4xl font-bold mt-2 text-green-400">
+          <h2 className="text-2xl sm:text-4xl font-bold mt-2 text-green-400">
             {completedTasks}
           </h2>
         </div>
 
-        <div className="bg-slate-900 rounded-2xl p-6 shadow-lg">
+        <div className="bg-slate-900 rounded-2xl p-4 sm:p-6 shadow-lg">
           <p className="text-gray-400">
             Pending
           </p>
 
-          <h2 className="text-4xl font-bold mt-2 text-yellow-400">
+          <h2 className="text-2xl sm:text-4xl font-bold mt-2 text-yellow-400">
             {pendingTasks}
           </h2>
         </div>
 
-        <div className="bg-slate-900 rounded-2xl p-6 shadow-lg">
+        <div className="bg-slate-900 rounded-2xl p-4 sm:p-6 shadow-lg">
           <p className="text-gray-400">
             Completion
           </p>
 
-          <h2 className="text-4xl font-bold mt-2 text-violet-400">
-            {completionRate}%
+<h2 className="text-2xl sm:text-4xl font-bold mt-2 text-violet-400">
+              {completionRate}%
           </h2>
         </div>
 
@@ -233,24 +309,23 @@ export default function Analytics() {
 
       {/* ================= CHARTS ================= */}
 
-      <div className="grid lg:grid-cols-2 gap-8 mb-8">
-
+<div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
         {/* Pie Chart */}
 
-        <div className="bg-slate-900 rounded-2xl p-6 shadow-xl">
+        <div className="bg-slate-900 rounded-2xl p-4 sm:p-6 shadow-xl">
 
-          <h2 className="text-2xl font-bold mb-6">
-            📌 Task Status
+<h2 className="text-xl sm:text-2xl font-bold mb-6">
+              📌 Task Status
           </h2>
 
-          <ResponsiveContainer width="100%" height={320}>
+          <ResponsiveContainer width="100%" height={280}>
 
             <PieChart>
 
               <Pie
                 data={pieData}
                 dataKey="value"
-                outerRadius={110}
+                outerRadius={80}
                 label
               >
 
@@ -277,13 +352,12 @@ export default function Analytics() {
 
         {/* Category Chart */}
 
-        <div className="bg-slate-900 rounded-2xl p-6 shadow-xl">
-
-          <h2 className="text-2xl font-bold mb-6">
-            📚 Tasks by Category
+<div className="bg-slate-900 rounded-2xl p-4 sm:p-6 shadow-xl">
+<h2 className="text-xl sm:text-2xl font-bold mb-6">
+              📚 Tasks by Category
           </h2>
 
-          <ResponsiveContainer width="100%" height={320}>
+          <ResponsiveContainer width="100%" height={280}>
 
             <BarChart data={categoryData}>
 
@@ -318,12 +392,11 @@ export default function Analytics() {
       </div>
             {/* ================= PRODUCTIVITY ================= */}
 
-      <div className="grid lg:grid-cols-2 gap-8 mb-8">
+<div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
+        <div className="bg-slate-900 rounded-2xl p-4 sm:p-6 shadow-xl">
 
-        <div className="bg-slate-900 rounded-2xl p-6 shadow-xl">
-
-          <h2 className="text-2xl font-bold mb-6">
-            ⭐ Productivity
+<h2 className="text-xl sm:text-2xl font-bold mb-6">
+              ⭐ Productivity
           </h2>
 
           <div className="w-full bg-slate-700 rounded-full h-5 overflow-hidden">
@@ -337,8 +410,7 @@ export default function Analytics() {
 
           </div>
 
-          <div className="mt-6 flex justify-between text-lg">
-
+<div className="mt-6 flex justify-between text-sm sm:text-lg">
             <span className="text-gray-300">
               Progress
             </span>
@@ -361,10 +433,9 @@ export default function Analytics() {
 
         {/* ================= UPCOMING TASKS ================= */}
 
-        <div className="bg-slate-900 rounded-2xl p-6 shadow-xl">
+        <div className="bg-slate-900 rounded-2xl p-4 sm:p-6 shadow-xl">
 
-          <h2 className="text-2xl font-bold mb-6">
-            📅 Upcoming Deadlines
+<h2 className="text-xl sm:text-2xl font-bold mb-6">            📅 Upcoming Deadlines
           </h2>
 
           {upcomingTasks.length === 0 ? (
@@ -378,9 +449,9 @@ export default function Analytics() {
             upcomingTasks.map((task) => (
 
               <div
-                key={task.id}
-                className="flex justify-between items-center border-b border-slate-700 py-4"
-              >
+  key={task.id}
+  className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 border-b border-slate-700 py-4"
+>
 
                 <div>
 
@@ -394,8 +465,7 @@ export default function Analytics() {
 
                 </div>
 
-                <div className="text-cyan-400 font-semibold">
-                  {task.dueDate}
+<div className="text-cyan-400 font-semibold text-sm sm:text-base">                  {task.dueDate}
                 </div>
 
               </div>
@@ -410,7 +480,7 @@ export default function Analytics() {
 
       {/* ================= AI INSIGHTS ================= */}
 
-      <div className="bg-slate-900 rounded-2xl p-6 shadow-xl">         
+      <div className="bg-slate-900 rounded-2xl p-4 sm:p-6 shadow-xl">         
 
           <div className="bg-slate-800 rounded-xl p-4">
             💡 Recommendation:

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { FiMenu } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./Calendar.css";
@@ -41,6 +42,7 @@ export default function CalendarPage() {
   const [view, setView] = useState("month");
 
   const [showAI, setShowAI] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   async function loadTasks() {
 
@@ -218,12 +220,10 @@ export default function CalendarPage() {
   ).length;
 
   return (
-    <div className="flex min-h-screen bg-slate-950 text-white">
-
+<div className="min-h-screen bg-slate-950 text-white lg:flex">
   {/* ================= SIDEBAR ================= */}
 
-  <div className="w-72 bg-slate-900 border-r border-slate-800 p-6">
-
+<div className="hidden lg:block w-72 bg-slate-900 border-r border-slate-800 p-6">
     <h1 className="text-3xl font-bold text-cyan-400 mb-10">
       📅 Calendar
     </h1>
@@ -305,43 +305,135 @@ export default function CalendarPage() {
     </button>
 
   </div>
+  {/* ================= MOBILE SIDEBAR ================= */}
+
+{sidebarOpen && (
+  <>
+    {/* Overlay */}
+    <div
+      className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+      onClick={() => setSidebarOpen(false)}
+    />
+
+    {/* Drawer */}
+    <div className="fixed left-0 top-0 h-full w-72 bg-slate-900 z-50 p-6 overflow-y-auto lg:hidden">
+
+      <button
+        onClick={() => setSidebarOpen(false)}
+        className="mb-6 text-gray-400"
+      >
+        ✕ Close
+      </button>
+
+      <h1 className="text-3xl font-bold text-cyan-400 mb-8">
+        📅 Calendar
+      </h1>
+
+      <div className="space-y-3">
+
+        <button
+          onClick={() => {
+            navigate("/dashboard");
+            setSidebarOpen(false);
+          }}
+          className="w-full text-left bg-slate-800 hover:bg-cyan-600 rounded-xl p-3"
+        >
+          🏠 Dashboard
+        </button>
+
+        <button
+          onClick={() => {
+            navigate("/chat");
+            setSidebarOpen(false);
+          }}
+          className="w-full text-left bg-slate-800 hover:bg-cyan-600 rounded-xl p-3"
+        >
+          🤖 AI Assistant
+        </button>
+
+        <button
+          onClick={() => {
+            navigate("/analytics");
+            setSidebarOpen(false);
+          }}
+          className="w-full text-left bg-slate-800 hover:bg-cyan-600 rounded-xl p-3"
+        >
+          📊 Analytics
+        </button>
+
+        <button
+          onClick={() => {
+            navigate("/profile");
+            setSidebarOpen(false);
+          }}
+          className="w-full text-left bg-slate-800 hover:bg-cyan-600 rounded-xl p-3"
+        >
+          👤 Profile
+        </button>
+
+      </div>
+
+      <hr className="my-8 border-slate-700" />
+
+      <button
+        onClick={() => {
+          generateAISchedule();
+          setSidebarOpen(false);
+        }}
+        className="w-full bg-gradient-to-r from-cyan-500 to-violet-600 rounded-xl py-3 font-semibold"
+      >
+        🤖 AI Schedule
+      </button>
+
+    </div>
+  </>
+)}
 
   {/* ================= MAIN CONTENT ================= */}
 
-  <div className="flex-1 p-8">
+<div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-x-hidden">
+    <div className="flex items-center gap-4 mb-6">
 
-    <h1 className="text-4xl font-bold mb-8">
-      📅 Smart Calendar
-    </h1>
+  <button
+    onClick={() => setSidebarOpen(true)}
+    className="lg:hidden bg-slate-900 p-3 rounded-xl"
+  >
+    <FiMenu size={24} />
+  </button>
+
+  <h1 className="text-2xl sm:text-4xl font-bold">
+    📅 Smart Calendar
+  </h1>
+
+</div>
 
     {/* ===== Statistics ===== */}
 
-    <div className="grid grid-cols-4 gap-6 mb-8">
-
-      <div className="bg-slate-900 rounded-2xl p-6">
+<div className="grid grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
+      <div className="bg-slate-900 rounded-2xl p-4 sm:p-6">
         <p className="text-gray-400">Total Tasks</p>
-        <h2 className="text-4xl font-bold mt-2 text-cyan-400">
+        <h2 className="text-2xl sm:text-4xl font-bold mt-2 text-cyan-400">
           {tasks.length}
         </h2>
       </div>
 
-      <div className="bg-slate-900 rounded-2xl p-6">
+      <div className="bg-slate-900 rounded-2xl p-4 sm:p-6">
         <p className="text-gray-400">Pending</p>
-        <h2 className="text-4xl font-bold mt-2 text-yellow-400">
+        <h2 className="text-2xl sm:text-4xl font-bold mt-2 text-yellow-400">
           {pending}
         </h2>
       </div>
 
-      <div className="bg-slate-900 rounded-2xl p-6">
+      <div className="bg-slate-900 rounded-2xl p-4 sm:p-6">
         <p className="text-gray-400">Completed</p>
-        <h2 className="text-4xl font-bold mt-2 text-green-400">
+        <h2 className="text-2xl sm:text-4xl font-bold mt-2 text-green-400">
           {completed}
         </h2>
       </div>
 
-      <div className="bg-slate-900 rounded-2xl p-6">
+      <div className="bg-slate-900 rounded-2xl p-4 sm:p-6">
         <p className="text-gray-400">Due Today</p>
-        <h2 className="text-4xl font-bold mt-2 text-red-400">
+        <h2 className="text-2xl sm:text-4xl font-bold mt-2 text-red-400">
           {todayTasks.length}
         </h2>
       </div>
@@ -350,8 +442,7 @@ export default function CalendarPage() {
 
     {/* ===== Legend ===== */}
 
-    <div className="flex gap-8 mb-6">
-
+<div className="flex flex-wrap gap-4 sm:gap-8 mb-6">
       <div className="flex items-center gap-2">
         <div className="w-4 h-4 rounded-full bg-red-500"></div>
         High
@@ -371,8 +462,7 @@ export default function CalendarPage() {
 
     {/* ===== Category Filters ===== */}
 
-    <div className="flex gap-3 flex-wrap mb-6">
-
+<div className="flex flex-wrap gap-2 sm:gap-3 mb-6">
       {[
         "All",
         "Study",
@@ -389,8 +479,8 @@ export default function CalendarPage() {
         <button
           key={item}
           onClick={() => setFilter(item)}
-          className={`px-5 py-2 rounded-xl transition ${
-            filter === item
+className={`px-3 sm:px-5 py-2 rounded-xl text-sm sm:text-base transition ${
+              filter === item
               ? "bg-cyan-500"
               : "bg-slate-800 hover:bg-slate-700"
           }`}
@@ -405,23 +495,22 @@ export default function CalendarPage() {
     
         {/* ================= CALENDAR ================= */}
 
-<div className="bg-slate-900 rounded-3xl shadow-2xl border border-slate-700 p-6">
-           <div className="flex justify-between items-center mb-4">
-  <button
+<div className="bg-slate-900 rounded-3xl shadow-2xl border border-slate-700 p-3 sm:p-6 overflow-x-auto">
+<div className="flex items-center justify-between gap-2 sm:gap-6 mb-4">
+    <button
     onClick={goPrevious}
     className="px-4 py-2 bg-slate-800 rounded-lg hover:bg-slate-700"
   >
     ←
   </button>
 
-<h2 className="text-3xl font-bold text-white">
-        {moment(currentDate).format("MMMM YYYY")}
+<h2 className="text-lg sm:text-3xl font-bold text-white text-center">
+          {moment(currentDate).format("MMMM YYYY")}
   </h2>
 
   <button
     onClick={goNext}
-    className="px-4 py-2 bg-slate-800 rounded-lg hover:bg-slate-700"
-  >
+className="px-3 sm:px-4 py-2 bg-slate-800 rounded-lg hover:bg-slate-700"  >
     →
   </button>
 
@@ -440,8 +529,11 @@ export default function CalendarPage() {
         popup
         selectable
         style={{
-          height: "80vh",
-        }}
+  height:
+    window.innerWidth < 768
+      ? "65vh"
+      : "80vh",
+}}
         eventPropGetter={eventStyleGetter}
         onSelectEvent={(event) =>
           setSelectedTask(event.resource)

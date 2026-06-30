@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { FiMenu } from "react-icons/fi";
 
 import { chatWithAI } from "../services/chatService";
 import { getTasks } from "../services/taskService";
-import remarkGfm from "remark-gfm";
 
 export default function AIChat() {
   const navigate = useNavigate();
@@ -60,6 +61,7 @@ export default function AIChat() {
 
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     async function loadTasks() {
@@ -104,48 +106,40 @@ export default function AIChat() {
         },
       ]);
     } catch (err) {
-  console.error(err);
+      console.error(err);
 
-  let errorMessage =
-    "❌ Something went wrong. Please try again later.";
+      let errorMessage =
+        "❌ Something went wrong. Please try again later.";
 
-  // Daily quota exceeded
-  if (
-    err.message?.includes("429") ||
-    err.message?.includes("quota") ||
-    err.message?.includes("Quota exceeded")
-  ) {
-    errorMessage =
-      "🚫 Today's free AI request limit has been reached.\n\n" +
-      "Please try again tomorrow when the quota resets.";
-  }
+      if (
+        err.message?.includes("429") ||
+        err.message?.includes("quota") ||
+        err.message?.includes("Quota exceeded")
+      ) {
+        errorMessage =
+          "🚫 Today's free AI request limit has been reached.\n\nPlease try again tomorrow when the quota resets.";
+      } else if (
+        err.message?.includes("API_KEY") ||
+        err.message?.includes("API key")
+      ) {
+        errorMessage =
+          "🔑 Gemini API key is invalid or missing.";
+      } else if (
+        err.message?.includes("Failed to fetch") ||
+        err.message?.includes("Network")
+      ) {
+        errorMessage =
+          "🌐 Unable to connect to Gemini.\nPlease check your internet connection.";
+      }
 
-  // Invalid API key
-  else if (
-    err.message?.includes("API_KEY") ||
-    err.message?.includes("API key")
-  ) {
-    errorMessage =
-      "🔑 Gemini API key is invalid or missing.";
-  }
-
-  // Network error
-  else if (
-    err.message?.includes("Failed to fetch") ||
-    err.message?.includes("Network")
-  ) {
-    errorMessage =
-      "🌐 Unable to connect to Gemini.\nPlease check your internet connection.";
-  }
-
-  setMessages((prev) => [
-    ...prev,
-    {
-      sender: "ai",
-      text: errorMessage,
-    },
-  ]);
-}
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "ai",
+          text: errorMessage,
+        },
+      ]);
+    }
 
     setLoading(false);
   }
@@ -154,18 +148,16 @@ export default function AIChat() {
     if (!input.trim()) return;
 
     const question = input;
-
     setInput("");
 
     await askAI(question);
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen bg-slate-950 text-white lg:flex">
+            {/* ================= DESKTOP SIDEBAR ================= */}
 
-      {/* Sidebar */}
-
-      <div className="w-72 bg-slate-900 border-r border-slate-800 p-6">
+      <div className="hidden lg:block w-72 bg-slate-900 border-r border-slate-800 p-6">
 
         <h1 className="text-3xl font-bold text-cyan-400 mb-10">
           🤖 AI Assistant
@@ -228,8 +220,7 @@ export default function AIChat() {
             setMessages([
               {
                 sender: "ai",
-                text:
-                  "👋 Welcome back! How can I help you today?",
+                text: "👋 Welcome back! How can I help you today?",
               },
             ])
           }
@@ -240,153 +231,249 @@ export default function AIChat() {
 
       </div>
 
-      {/* Chat Section */}
+      {/* ================= MOBILE SIDEBAR ================= */}
 
-      <div className="flex-1 p-8">
+      {sidebarOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
 
-        <h1 className="text-4xl font-bold mb-8">
-          🤖 AI Productivity Assistant
-        </h1>
+          <div className="fixed left-0 top-0 w-72 h-full bg-slate-900 z-50 p-6 overflow-y-auto lg:hidden">
 
-        <div className="bg-slate-900 rounded-2xl h-[650px] overflow-y-auto p-8">
-                      {messages.map((msg, index) => (
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="mb-6 text-gray-400"
+            >
+              ✕ Close
+            </button>
 
-            msg.sender === "user" ? (
+            <h1 className="text-3xl font-bold text-cyan-400 mb-8">
+              🤖 AI Assistant
+            </h1>
 
-              <div
-                key={index}
-                className="flex justify-end mb-8"
+            <div className="space-y-3">
+
+              <button
+                onClick={() => {
+                  navigate("/dashboard");
+                  setSidebarOpen(false);
+                }}
+                className="w-full text-left bg-slate-800 hover:bg-cyan-600 rounded-xl p-3"
               >
+                🏠 Dashboard
+              </button>
 
-                <div className="bg-gradient-to-r from-cyan-500 to-cyan-600 max-w-lg rounded-2xl px-6 py-4 shadow-lg">
-
-                  <p className="text-white">
-                    {msg.text}
-                  </p>
-
-                </div>
-
-              </div>
-
-            ) : (
-
-              <div
-                key={index}
-                className="flex justify-start mb-8"
+              <button
+                onClick={() => {
+                  navigate("/calendar");
+                  setSidebarOpen(false);
+                }}
+                className="w-full text-left bg-slate-800 hover:bg-cyan-600 rounded-xl p-3"
               >
+                📅 Calendar
+              </button>
 
-                <div className="bg-slate-800 w-[90%] rounded-2xl border border-slate-700 shadow-lg overflow-hidden">
+              <button
+                onClick={() => {
+                  navigate("/analytics");
+                  setSidebarOpen(false);
+                }}
+                className="w-full text-left bg-slate-800 hover:bg-cyan-600 rounded-xl p-3"
+              >
+                📊 Analytics
+              </button>
 
-                  {/* AI Header */}
-
-                  <div className="flex items-center gap-4 px-6 py-4 bg-slate-850 border-b border-slate-700">
-
-                    <div className="w-12 h-12 rounded-full bg-violet-600 flex items-center justify-center text-xl">
-                      🤖
-                    </div>
-
-                    <div>
-
-                      <h3 className="font-bold">
-                        Last Minute Life Saver AI
-                      </h3>
-
-                      <p className="text-sm text-gray-400">
-                        Productivity Assistant
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                  {/* AI Message */}
-
-                  <div className="px-8 py-6">
-
-                    <div className="prose prose-invert max-w-none leading-8">
-
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                         {msg.text}
-                    </ReactMarkdown>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            )
-
-          ))}
-
-          {loading && (
-
-            <div className="flex justify-start mb-8">
-
-              <div className="bg-slate-800 rounded-2xl px-6 py-5 border border-slate-700 animate-pulse">
-
-                🤖 Thinking...
-
-              </div>
+              <button
+                onClick={() => {
+                  navigate("/profile");
+                  setSidebarOpen(false);
+                }}
+                className="w-full text-left bg-slate-800 hover:bg-cyan-600 rounded-xl p-3"
+              >
+                👤 Profile
+              </button>
 
             </div>
 
-          )}
+            <hr className="my-8 border-slate-700" />
 
-          <div ref={bottomRef}></div>
+            <h2 className="text-lg font-semibold mb-4">
+              ⚡ Quick Prompts
+            </h2>
+
+            <div className="space-y-3">
+
+              {prompts.map((item) => (
+                <button
+                  key={item.label}
+                  onClick={() => {
+                    askAI(item.prompt);
+                    setSidebarOpen(false);
+                  }}
+                  className="w-full text-left bg-slate-800 hover:bg-violet-600 rounded-xl p-3"
+                >
+                  {item.icon} {item.label}
+                </button>
+              ))}
+
+            </div>
+
+          </div>
+        </>
+      )}
+
+      {/* ================= CHAT ================= */}
+
+      <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-x-hidden">
+
+        <div className="flex items-center gap-4 mb-6">
+
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="lg:hidden bg-slate-900 p-3 rounded-xl"
+          >
+            <FiMenu size={24} />
+          </button>
+
+          <h1 className="text-2xl sm:text-4xl font-bold">
+            🤖 AI Assistant
+          </h1>
 
         </div>
 
-        {/* Input Area */}
+        <div className="bg-slate-900 rounded-2xl h-[60vh] sm:h-[70vh] lg:h-[650px] overflow-y-auto p-4 sm:p-6 lg:p-8">
 
-        <div className="mt-6">
+          {messages.map((msg, index) => (
 
-          <div className="flex gap-4">
+  msg.sender === "user" ? (
 
-            <input
-              type="text"
-              placeholder="Ask AI anything..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  sendMessage();
-                }
-              }}
-              className="flex-1 bg-slate-800 border border-slate-700 rounded-2xl px-6 py-4 outline-none focus:border-cyan-500"
-            />
+    <div
+      key={index}
+      className="flex justify-end mb-6"
+    >
+      <div className="bg-gradient-to-r from-cyan-500 to-cyan-600 max-w-full sm:max-w-lg rounded-2xl px-4 sm:px-6 py-4 shadow-lg break-words">
 
-            <button
-              onClick={sendMessage}
-              className="bg-gradient-to-r from-cyan-500 to-violet-600 px-10 rounded-2xl font-semibold hover:scale-105 transition"
-            >
-              🚀 Send
-            </button>
+        <p className="text-white whitespace-pre-wrap">
+          {msg.text}
+        </p>
 
+      </div>
+    </div>
+
+  ) : (
+
+    <div
+      key={index}
+      className="flex justify-start mb-6"
+    >
+      <div className="bg-slate-800 w-full sm:w-[90%] rounded-2xl border border-slate-700 shadow-lg overflow-hidden">
+
+        {/* AI Header */}
+
+        <div className="flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-4 border-b border-slate-700">
+
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-violet-600 flex items-center justify-center text-lg sm:text-xl">
+            🤖
           </div>
-                    </div>
 
-          {/* Footer */}
+          <div>
 
-          <div className="flex items-center justify-between mt-5 text-sm text-gray-400">
+            <h3 className="font-bold">
+              Last Minute AI
+            </h3>
 
-            <p>
-              💡 Tip: Try asking "Plan my day", "Motivate me", or "Break my tasks into subtasks".
+            <p className="text-xs sm:text-sm text-gray-400">
+              Productivity Assistant
             </p>
 
-            <span className="bg-slate-800 border border-slate-700 px-3 py-1 rounded-full">
-              Powered by Gemini AI ✨
-            </span>
+          </div>
+
+        </div>
+
+        {/* AI Response */}
+
+        <div className="px-4 sm:px-8 py-6">
+
+          <div className="prose prose-invert max-w-none">
+
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {msg.text}
+            </ReactMarkdown>
 
           </div>
 
         </div>
 
-      
+      </div>
 
     </div>
 
-  );
+  )
+
+))}
+
+{loading && (
+
+  <div className="flex justify-start mb-6">
+
+    <div className="bg-slate-800 rounded-2xl px-6 py-5 border border-slate-700 animate-pulse">
+      🤖 Thinking...
+    </div>
+
+  </div>
+
+)}
+
+<div ref={bottomRef} />
+
+</div>
+
+{/* ================= INPUT ================= */}
+
+<div className="mt-5">
+
+  <div className="flex gap-3">
+
+    <input
+      type="text"
+      placeholder="Ask AI anything..."
+      value={input}
+      onChange={(e) => setInput(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          sendMessage();
+        }
+      }}
+      className="flex-1 bg-slate-800 border border-slate-700 rounded-2xl px-5 py-4 outline-none focus:border-cyan-500"
+    />
+
+    <button
+      onClick={sendMessage}
+      className="bg-gradient-to-r from-cyan-500 to-violet-600 px-6 sm:px-10 rounded-2xl font-semibold hover:scale-105 transition"
+    >
+      🚀
+    </button>
+
+  </div>
+
+</div>
+
+{/* ================= FOOTER ================= */}
+
+<div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between mt-5 text-sm text-gray-400">
+
+  <p>
+    💡 Tip: Ask "Plan my day", "Break my tasks", or "Motivate me".
+  </p>
+
+  
+
+</div>
+
+</div>
+
+</div>
+);
 }

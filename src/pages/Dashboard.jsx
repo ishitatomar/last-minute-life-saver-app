@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
+import { FiMenu } from "react-icons/fi";
 
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
@@ -18,6 +19,7 @@ export default function Dashboard() {
   const auth = getAuth();
 
   const [tasks, setTasks] = useState([]);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -39,16 +41,16 @@ export default function Dashboard() {
     if (!title.trim()) return;
 
     await addTask({
-  title,
-  description,
-  priority,
-  dueDate,
-  estimatedTime,
-  category,
-  completed: false,
-  createdAt: new Date(),
-  userId: auth.currentUser.uid,
-});
+      title,
+      description,
+      priority,
+      dueDate,
+      estimatedTime,
+      category,
+      completed: false,
+      createdAt: new Date(),
+      userId: auth.currentUser.uid,
+    });
 
     setTitle("");
     setDescription("");
@@ -66,27 +68,55 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen bg-slate-950 text-white lg:flex">
+      {/* Mobile Sidebar Overlay */}
+{sidebarOpen && (
+  <>
+    {/* Background */}
+    <div
+      className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+      onClick={() => setSidebarOpen(false)}
+    />
 
-      {/* Sidebar */}
+    {/* Sidebar */}
+    <div className="fixed left-0 top-0 h-full w-64 bg-slate-900 z-50 lg:hidden shadow-2xl">
       <Sidebar />
+    </div>
+  </>
+)}
+
+      {/* Desktop Sidebar */}
+      <div className="hidden lg:block">
+        <Sidebar />
+      </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-8">
+      <main className="flex-1 overflow-x-hidden p-4 sm:p-6 lg:p-8">
 
-        {/* Navbar */}
-        <Navbar />
+<div className="flex items-center gap-3 mb-4">
 
-        {/* Statistics */}
-        <div className="mt-6">
-  <StatsSection tasks={tasks} />
+  {/* Mobile Menu Button */}
+  <button
+    className="lg:hidden bg-slate-900 p-3 rounded-xl"
+    onClick={() => setSidebarOpen(true)}
+  >
+    <FiMenu size={24} />
+  </button>
+
+  <div className="flex-1">
+    <Navbar />
+  </div>
+
 </div>
+        {/* Stats */}
+        <div className="mt-6">
+          <StatsSection tasks={tasks} />
+        </div>
 
         {/* Add Task */}
+        <section className="bg-slate-900 rounded-2xl p-5 sm:p-8 mt-8 shadow-lg">
 
-        <div className="bg-slate-900 rounded-2xl p-8 mt-8 shadow-lg">
-
-          <h2 className="text-3xl font-bold mb-6">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-6">
             Add New Task
           </h2>
 
@@ -95,7 +125,7 @@ export default function Dashboard() {
             placeholder="Task Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full p-3 mb-4 rounded-lg bg-slate-800 border border-slate-700 text-white outline-none"
+            className="w-full p-3 mb-4 rounded-lg bg-slate-800 border border-slate-700 outline-none"
           />
 
           <textarea
@@ -103,7 +133,7 @@ export default function Dashboard() {
             placeholder="Task Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full p-3 mb-4 rounded-lg bg-slate-800 border border-slate-700 text-white outline-none"
+            className="w-full p-3 mb-4 rounded-lg bg-slate-800 border border-slate-700 outline-none"
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -111,7 +141,7 @@ export default function Dashboard() {
             <select
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
-              className="p-3 rounded-lg bg-slate-800 border border-slate-700"
+              className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
             >
               <option value="High">🔴 High</option>
               <option value="Medium">🟡 Medium</option>
@@ -122,21 +152,21 @@ export default function Dashboard() {
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              className="p-3 rounded-lg bg-slate-800 border border-slate-700"
+              className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
             />
 
             <input
               type="text"
-              placeholder="Estimated Time (Example: 2 Hours)"
+              placeholder="Estimated Time"
               value={estimatedTime}
               onChange={(e) => setEstimatedTime(e.target.value)}
-              className="p-3 rounded-lg bg-slate-800 border border-slate-700"
+              className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
             />
 
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="p-3 rounded-lg bg-slate-800 border border-slate-700"
+              className="w-full p-3 rounded-lg bg-slate-800 border border-slate-700"
             >
               <option>Study</option>
               <option>Work</option>
@@ -149,62 +179,54 @@ export default function Dashboard() {
 
           </div>
 
-          <div className="flex gap-4 mt-6">
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 mt-6">
 
             <button
               onClick={createTask}
-              className="bg-cyan-500 hover:bg-cyan-600 px-6 py-3 rounded-xl font-semibold transition"
+              className="w-full sm:w-auto bg-cyan-500 hover:bg-cyan-600 px-6 py-3 rounded-xl font-semibold transition"
             >
               ➕ Add Task
             </button>
 
             <button
               onClick={() => navigate("/chat")}
-              className="bg-violet-600 hover:bg-violet-700 px-6 py-3 rounded-xl font-semibold transition"
+              className="w-full sm:w-auto bg-violet-600 hover:bg-violet-700 px-6 py-3 rounded-xl font-semibold transition"
             >
               🤖 Open AI Assistant
             </button>
 
           </div>
 
-        </div>
+        </section>
 
-        {/* My Tasks */}
+        {/* Tasks */}
+        <section className="mt-10">
 
-        <div className="mt-10">
-
-          <h2 className="text-3xl font-bold mb-5">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-5">
             My Tasks
           </h2>
 
           {tasks.length === 0 ? (
-
             <div className="bg-slate-900 rounded-xl p-8 text-center text-gray-400">
               No tasks available.
             </div>
-
           ) : (
-
             <div className="space-y-5">
-
               {tasks.map((task) => (
-
                 <TaskCard
                   key={task.id}
                   task={task}
                   onDelete={removeTask}
                   refresh={loadTasks}
                 />
-
               ))}
-
             </div>
-
           )}
 
-        </div>
+        </section>
 
-      </div>
+      </main>
 
     </div>
   );

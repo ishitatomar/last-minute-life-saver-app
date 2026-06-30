@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FiMenu } from "react-icons/fi";
 import { getAuth, signOut } from "firebase/auth";
 
 import Sidebar from "../components/Sidebar";
-import Navbar from "../components/Navbar";
 import { getTasks } from "../services/taskService";
 
 export default function Profile() {
@@ -13,6 +13,7 @@ export default function Profile() {
   const user = auth.currentUser;
 
   const [tasks, setTasks] = useState([]);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
   const [notifications, setNotifications] = useState(true);
 
@@ -74,25 +75,52 @@ export default function Profile() {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-950 text-white">
+<div className="min-h-screen bg-slate-950 text-white lg:flex">
+      {/* Desktop Sidebar */}
 
+<div className="hidden lg:block">
+  <Sidebar />
+</div>
+
+{/* Mobile Sidebar */}
+
+{sidebarOpen && (
+  <>
+    <div
+      className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+      onClick={() => setSidebarOpen(false)}
+    />
+
+    <div className="fixed left-0 top-0 h-full w-72 bg-slate-900 z-50 lg:hidden">
       <Sidebar />
+    </div>
+  </>
+)}
 
-      <div className="flex-1 p-8">
-
+<div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-x-hidden">
         
 
-        <h1 className="text-4xl font-bold mb-8">
-          👤 My Profile
-        </h1>
+        <div className="flex items-center gap-4 mb-6">
+
+  <button
+    className="lg:hidden bg-slate-900 p-3 rounded-xl"
+    onClick={() => setSidebarOpen(true)}
+  >
+    <FiMenu size={24} />
+  </button>
+
+  <h1 className="text-2xl sm:text-4xl font-bold">
+    👤 My Profile
+  </h1>
+
+</div>
 
         {/* ================= TOP ================= */}
 
-        <div className="grid lg:grid-cols-3 gap-8">
-
+<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Profile */}
 
-          <div className="bg-slate-900 rounded-3xl p-8 shadow-xl">
+          <div className="bg-slate-900 rounded-3xl p-5 sm:p-8 shadow-xl">
 
             <div className="flex flex-col items-center">
 
@@ -102,7 +130,7 @@ export default function Profile() {
                 className="w-36 h-36 rounded-full border-4 border-cyan-500 shadow-lg"
               />
 
-              <h2 className="text-3xl font-bold mt-6">
+              <h2 className="text-2xl sm:text-3xl font-bold mt-6">
                 {user?.displayName}
               </h2>
 
@@ -123,13 +151,13 @@ export default function Profile() {
 
           {/* Account */}
 
-          <div className="lg:col-span-2 bg-slate-900 rounded-3xl p-8 shadow-xl">
+          <div className="lg:col-span-2 bg-slate-900 rounded-3xl p-5 sm:p-8 shadow-xl">
 
             <h2 className="text-2xl font-bold mb-8">
               Account Details
             </h2>
 
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
               <div>
 
@@ -195,14 +223,13 @@ export default function Profile() {
 
         <div className="mt-10">
 
-          <div className="bg-slate-900 rounded-3xl p-8 shadow-xl">
+          <div className="bg-slate-900 rounded-3xl p-5 sm:p-8 shadow-xl">
 
-            <h2 className="text-3xl font-bold mb-8">
+            <h2 className="text-2xl sm:text-2xl sm:text-3xl font-bold mb-8">
               🏆 Achievements
             </h2>
 
-            <div className="grid md:grid-cols-2 gap-5">
-
+<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {achievements.map((item, index) => (
 
                 <div
@@ -250,13 +277,12 @@ export default function Profile() {
         
                 {/* ================= SETTINGS + RECENT ACTIVITY ================= */}
 
-        <div className="grid lg:grid-cols-2 gap-8 mt-10">
-
+<div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-10">
           {/* Settings */}
 
-          <div className="bg-slate-900 rounded-3xl p-8 shadow-xl">
+          <div className="bg-slate-900 rounded-3xl p-5 sm:p-8 shadow-xl">
 
-            <h2 className="text-3xl font-bold mb-8">
+            <h2 className="text-2xl sm:text-2xl sm:text-3xl font-bold mb-8">
               ⚙️ Account Settings
             </h2>
 
@@ -317,9 +343,9 @@ export default function Profile() {
 
           {/* Recent Activity */}
 
-          <div className="bg-slate-900 rounded-3xl p-8 shadow-xl">
+          <div className="bg-slate-900 rounded-3xl p-5 sm:p-8 shadow-xl">
 
-            <h2 className="text-3xl font-bold mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-8">
               🕒 Recent Activity
             </h2>
 
@@ -339,8 +365,7 @@ export default function Profile() {
 
                   <div
                     key={task.id}
-                    className="bg-slate-800 rounded-xl p-5 flex justify-between items-center"
-                  >
+className="bg-slate-800 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3"                  >
 
                     <div>
 
@@ -390,8 +415,7 @@ export default function Profile() {
 
         {/* ================= LOGOUT ================= */}
 
-        <div className="mt-10 flex justify-end">
-
+<div className="mt-10 flex justify-center sm:justify-end">
           <button
             onClick={logout}
             className="bg-gradient-to-r from-red-500 to-red-700 hover:scale-105 transition px-8 py-3 rounded-xl font-semibold shadow-lg"
