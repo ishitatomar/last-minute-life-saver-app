@@ -2,4 +2,13 @@ package com.ishitatomar.lastminutelifesaver;
 
 import com.getcapacitor.BridgeActivity;
 
-public class MainActivity extends BridgeActivity {}
+import ee.forgr.capacitor.social.login.ModifiedMainActivityForSocialLoginPlugin;
+
+public class MainActivity extends BridgeActivity
+        implements ModifiedMainActivityForSocialLoginPlugin {
+
+    @Override
+    public void IHaveModifiedTheMainActivityForTheUseWithSocialLoginPlugin() {
+        // Required by the plugin
+    }
+}
