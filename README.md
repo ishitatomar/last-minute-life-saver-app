@@ -3,7 +3,7 @@
 > **An AI-powered productivity assistant that helps users organize tasks, create smart schedules, manage deadlines, and improve productivity using Google Gemini AI.**
 
 <p align="center">
-  <img src="public/logo.png" alt="Last Minute Logo" width="140"/>
+  <img src="public/icon.png" alt="Last Minute Logo" width="140"/>
 </p>
 
 ---
