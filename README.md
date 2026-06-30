@@ -175,8 +175,3 @@ npx cap open android
 
 ---
 
-
-
-## 📄 License
-
-This project is developed for educational and portfolio purposes.
