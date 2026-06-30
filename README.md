@@ -103,35 +103,6 @@
 
 ---
 
-# 📂 Project Structure
-
-```
-src/
-│
-├── components/
-│
-├── context/
-│
-├── firebase/
-│
-├── pages/
-│   ├── Landing
-│   ├── Login
-│   ├── Dashboard
-│   ├── Calendar
-│   ├── AIChat
-│   ├── Analytics
-│   └── Profile
-│
-├── services/
-│
-├── App.jsx
-│
-└── main.jsx
-```
-
----
-
 # 🚀 Installation
 
 Clone the repository
