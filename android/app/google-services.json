@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "604290075583",
+    "project_id": "last-minute-life-saver-926b1",
+    "storage_bucket": "last-minute-life-saver-926b1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:604290075583:android:533a55082b627359906f0a",
+        "android_client_info": {
+          "package_name": "com.ishitatomar.lastminutelifesaver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "604290075583-d4ednpspm80gld6vmlp830nb9per3l3p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ishitatomar.lastminutelifesaver",
+            "certificate_hash": "3b98906a9a00848252e2cc770b7ff316249752bc"
+          }
+        },
+        {
+          "client_id": "604290075583-ii8h856p2ufoh9cqqbqefjadopipkv0p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbcoBRxQixVZYO0Vdskeqv39QKAdoKxaU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "604290075583-ii8h856p2ufoh9cqqbqefjadopipkv0p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
